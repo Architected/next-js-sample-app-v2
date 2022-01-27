@@ -1,7 +1,14 @@
-import '../styles/globals.css';
+import Layout from '../components/layout/main';
+import { StoreProvider } from '../state/storeProvider';
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+  return (
+    <StoreProvider>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </StoreProvider>
+  );
 }
 
 export default MyApp;
