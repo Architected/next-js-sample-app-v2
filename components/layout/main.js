@@ -2,7 +2,7 @@ import TopNavigation from './topNavigation';
 import FooterNavigation from './footer';
 import LeftNavigation from './leftNavigation';
 import Head from 'next/head';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Store } from '../../state/storeProvider';
 
 function Layout(props) {
@@ -15,18 +15,29 @@ function Layout(props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {(authState && authState.signinScope === 'COMPLETE') || marketPlace ? (
-        <div className="dashboard-wrap">
+      {((authState && authState.signinScope === 'COMPLETE') || marketPlace) && (
+        <>
           <TopNavigation />
-          <LeftNavigation />
-          <main className="main">{props.children}</main>
-        </div>
-      ) : (
-        <div>
-          <TopNavigation />
-          <main className="main">{props.children}</main>
-          <FooterNavigation />
-        </div>
+          <div className="flex">
+            {/* <aside className="h-screen sticky top-0">
+              <LeftNavigation />
+            </aside> */}
+            <main className="w-screen">{props.children}</main>
+          </div>
+        </>
+      )}
+      {(!authState || authState.signinScope !== 'COMPLETE') && (
+        <>
+          <div>
+            <div className="flex flex-col h-screen">
+              <TopNavigation />
+              <main className="flex-grow">
+                <div className="max-w-6xl mx-auto px-4">{props.children}</div>
+              </main>
+              <FooterNavigation />
+            </div>
+          </div>
+        </>
       )}
     </>
   );

@@ -1,89 +1,198 @@
-import React, { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Store } from '../../state/storeProvider';
+import Identicon from 'react-identicons';
+import { architectedConfig } from '../../architectedConfig';
+import { urlConstants } from '../../helper/urlConstants';
+import { hasCompleteToken } from '../../helper/storageHelper';
+import { useRouter } from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faBars,
+  faCog,
+  faSignOutAlt,
+  faUserCircle,
+} from '@fortawesome/free-solid-svg-icons';
 
 function TopNavigation(props) {
   const { state } = useContext(Store);
-  const { marketPlace, authState } = state['auth'];
+  const { authState, bearerToken, isAuthFlow } = state['auth'];
+  const { asPath } = useRouter();
+  const { marketPlace } = state['global'];
+  const isLoggedIn = hasCompleteToken(authState, bearerToken);
+
+  const [mobileMenuHidden, setMobileMenuHidden] = useState(true);
+  const [contextMenuHidden, setContextMenuHidden] = useState(true);
+
+  const signInUrl =
+    architectedConfig.siteMode == 'dapp'
+      ? '/auth/signin/wallet'
+      : '/auth/signin/email';
+  const signInTitle =
+    architectedConfig.siteMode == 'dapp' ? 'Connect' : 'Sign in';
+
+  const displayConnect =
+    architectedConfig.siteMode == 'dapp' && asPath != '/auth/signin/wallet';
+
+  const toggleMobileMenu = (e) => {
+    setMobileMenuHidden(!mobileMenuHidden);
+    if (e) e.stopPropagation();
+  };
+
+  const toggleContextMenu = (e) => {
+    setContextMenuHidden(!contextMenuHidden);
+    if (e) e.stopPropagation();
+  };
+
+  const hideMenuIfVisible = () => {
+    if (!mobileMenuHidden) {
+      setMobileMenuHidden(true);
+    }
+
+    if (!contextMenuHidden) {
+      setContextMenuHidden(true);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('click', hideMenuIfVisible);
+
+    return () => {
+      window.removeEventListener('click', hideMenuIfVisible);
+    };
+  }, [mobileMenuHidden, contextMenuHidden]);
 
   return (
     <>
-<nav class="border-b-2 border-gray-100" bind:this={root}>
-	<div class="mx-auto px-10">
-		<div class="flex justify-between">
-			<div class="flex space-x-4">
-				<div>
-					<a href="/" class="flex items-center py-5 text-gray-700 hover:text-gray-900">
-						<span class="font-bold"
-							>{architectedConfig.siteName}
-							{architectedConfig.appEnv != 'prod' ? ` - [${architectedConfig.appEnv}]` : ''}</span
-						>
-					</a>
-				</div>
-			</div>
-			<!-- top right hand side nav -->
-			<div class="hidden md:flex items-center space-x-1">
-				{#if $AuthStore.authState && $AuthStore.authState.signinScope === 'COMPLETE'}
-					<div class="py-2 px-2">{$AuthStore.authState.identifier}</div>
-					<div class="ml-3 relative">
-						<button class="context-menu-button py-2">
-							<Fa icon={faUserCircle} size="2x" />
-						</button>
-						<div
-							class="context-menu hidden absolute right-0 mt-2 w-48 shadow-lg py-1 bg-white ring-1 ring-gray-700 ring-opacity-5 focus:outline-none"
-						>
-							<a
-								href="/profile"
-								class="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200"
-							>
-								<Fa icon={faUserCircle} size="sm" />
-								<p class="ml-2">Your Profile</p>
-							</a>
-							<a
-								href="/changepassword"
-								class="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200"
-							>
-								<Fa icon={faCog} size="sm" />
-								<p class="ml-2">Change Password</p>
-							</a>
-							<a
-								href="/auth/signout"
-								class="flex block px-4 py-2 text-sm text-gray-700 items-center  hover:bg-gray-200"
-							>
-								<Fa icon={faSignOutAlt} size="sm" />
-								<p class="ml-2">Sign out</p>
-							</a>
-						</div>
-					</div>
-				{/if}
-				{#if $AuthStore.authState == null && !$AuthStore.isAuthFlow}
-					<a href="/auth/signup/email" class="py-2 px-4 text-black">Sign Up</a>
-					<a href="/auth/signin/email" class="py-2 px-4 text-black">Sign In</a>
-				{/if}
-			</div>
-			<!-- mobile button -->
-			<div class="md:hidden flex items-center">
-				<button class="mobile-menu-button">
-					<Fa icon={faBars} size="2x" />
-				</button>
-			</div>
-		</div>
-	</div>
+      <nav className="border-b-2 border-gray-100">
+        <div className="mx-auto px-10">
+          <div className="flex justify-between">
+            {/* LHS Portion */}
+            <div className="flex space-x-4">
+              <div>
+                <Link href="/" passHref>
+                  <a className="flex items-center py-5 text-gray-700 hover:text-gray-900">
+                    <span className="font-bold">
+                      {architectedConfig.siteName}
+                      {architectedConfig.appEnv != 'prod'
+                        ? ` - [${architectedConfig.appEnv}]`
+                        : ''}
+                    </span>
+                  </a>
+                </Link>
+              </div>
+            </div>
+            {/* RHS Portion */}
+            <div className="hidden md:flex items-center space-x-1">
+              {/* Signed in options */}
+              {authState && authState.signinScope === 'COMPLETE' && (
+                <>
+                  <div className="py-2 px-2">{authState.identifier}</div>
+                  <div className="ml-3 relative">
+                    <button
+                      className="context-menu-button py-2"
+                      onClick={(e) => toggleContextMenu(e)}
+                    >
+                      <Identicon string={authState.identifier} size={30} />
+                    </button>
+                    {/* Display on click of identicon */}
+                    {!contextMenuHidden && (
+                      <>
+                        <div className="context-menu absolute right-0 mt-2 w-48 shadow-lg py-1 bg-white ring-1 ring-gray-700 ring-opacity-5 focus:outline-none">
+                          <Link href="/profile">
+                            <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
+                              <FontAwesomeIcon icon={faUserCircle} size="sm" />
+                              <p className="ml-2">Your Profile</p>
+                            </a>
+                          </Link>
+                          <Link href="/changepassword">
+                            <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
+                              <FontAwesomeIcon icon={faCog} size="sm" />
+                              <p className="ml-2">Change Password</p>
+                            </a>
+                          </Link>
+                          <Link href="/auth/signout">
+                            <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
+                              <FontAwesomeIcon icon={faSignOutAlt} size="sm" />
+                              <p className="ml-2">Sign out</p>
+                            </a>
+                          </Link>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
+              {/* unauthenticated options */}
+              {!authState && !isAuthFlow && (
+                <>
+                  <Link href="/auth/signup/email">
+                    <a className="py-2 px-4 text-black">Sign Up</a>
+                  </Link>
+                  <Link href="/auth/signin/email">
+                    <a className="py-2 px-4 text-black">Sign In</a>
+                  </Link>
+                </>
+              )}
+            </div>
+            {/* Responsive menu toggle icon */}
+            <div className="md:hidden flex items-center">
+              <button
+                className="mobile-menu-button"
+                onClick={(e) => toggleMobileMenu(e)}
+              >
+                <FontAwesomeIcon icon={faBars} size="lg" />
+              </button>
+            </div>
+          </div>
+        </div>
+        {!mobileMenuHidden && (
+          <div className="mobile-menu md:hidden">
+            {authState && authState.signinScope === 'COMPLETE' && (
+              <>
+                <Link href="/file">
+                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
+                    My Files
+                  </a>
+                </Link>
 
-	<!-- mobile nav -->
-	<div class="mobile-menu hidden md:hidden">
-		{#if $AuthStore.authState && $AuthStore.authState.signinScope === 'COMPLETE'}
-			<a href="/file" class="block py-2 px-6 text-sm hover:bg-gray-200">My Files</a>
-			<a href="/profile" class="block py-2 px-6 text-sm hover:bg-gray-200">Profile</a>
-			<a href="/changepassword" class="block py-2 px-6 text-sm hover:bg-gray-200">Change Password</a
-			>
-			<a href="/auth/signout" class="block py-2 px-6 text-sm hover:bg-gray-200">Sign Out</a>
-		{/if}
-		{#if $AuthStore.authState == null && !$AuthStore.isAuthFlow}
-			<a href="/auth/signup/email" class="block py-2 px-6 text-sm hover:bg-gray-200">Sign Up</a>
-			<a href="/auth/signin/email" class="block py-2 px-6 text-sm hover:bg-gray-200">Sign In</a>
-		{/if}
-	</div>
-</nav>
+                <Link href="/profile">
+                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
+                    Profile
+                  </a>
+                </Link>
+
+                <Link href="/changepassword">
+                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
+                    Change Password
+                  </a>
+                </Link>
+
+                <Link href="/auth/signout">
+                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
+                    Sign Out
+                  </a>
+                </Link>
+              </>
+            )}
+            {authState == null && !isAuthFlow && (
+              <>
+                <Link href="/auth/signup/email">
+                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
+                    Sign Up
+                  </a>
+                </Link>
+
+                <Link href="/auth/signin/email">
+                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
+                    Sign In
+                  </a>
+                </Link>
+              </>
+            )}
+          </div>
+        )}
+      </nav>
     </>
   );
 }

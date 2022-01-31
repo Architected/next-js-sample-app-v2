@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.tab.active {
+  @apply text-black border-b-2 font-medium border-black;
+}
+
+.tab-content {
+  @apply hidden;
+}
+
+.tab-content.active {
+  @apply block;
+}
