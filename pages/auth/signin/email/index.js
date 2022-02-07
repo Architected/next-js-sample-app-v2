@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Store } from '../../../../state/storeProvider';
 import { iamClient } from '../../../../services/defaultServices.js';
@@ -16,7 +16,7 @@ function SignInEmail() {
   const { state, dispatch } = useContext(Store);
   const { authState, callInProgress, errorMessage, warningMessage } =
     state['auth'];
-
+  const [hideForm, setHideForm] = useState(false);
   useEffect(() => {
     dispatch({ type: authActionType.INIT_DEFAULT_LAYOUT });
 
@@ -37,20 +37,23 @@ function SignInEmail() {
     if (responseData && !responseData.inError) {
       saveToStore('_tokenWrapper', responseData.tokenWrapper);
       var nextUrl = await nextStep(responseData.tokenWrapper);
+      setHideForm(true);
       router.push(nextUrl);
     }
   };
 
   return (
     <>
-      <AuthContainer>
-        <EmailSignIn
-          submitHandler={submitHandler}
-          isLoading={callInProgress}
-          errorMessage={errorMessage}
-          warningMessage={warningMessage}
-        />
-      </AuthContainer>
+      {!hideForm && (
+        <AuthContainer>
+          <EmailSignIn
+            submitHandler={submitHandler}
+            isLoading={callInProgress}
+            errorMessage={errorMessage}
+            warningMessage={warningMessage}
+          />
+        </AuthContainer>
+      )}
     </>
   );
 }

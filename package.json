@@ -11,7 +11,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.16",
-    "architected-client": "^1.3.0-beta.10",
+    "architected-client": "^1.3.0-beta.11",
     "architected-crypto-helper": "^1.0.0-beta.10",
     "ethers": "^5.5.3",
     "ipfs-http-client": "^56.0.0",

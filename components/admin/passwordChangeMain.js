@@ -1,29 +1,37 @@
 import { useRef } from 'react';
-import { FormFieldRow, SubmitButton } from '../../shared/formFields';
-import AuthFormContainer from '../authFormContainer';
+import AuthFormContainer from '../auth/authFormContainer';
 import { useForm } from 'react-hook-form';
+import { FormFieldRow, SubmitButton } from '../shared/formFields';
 
-function PasswordResetPerform({
+function PasswordChangeMain({
   submitHandler,
-  isLoading,
+  callInProgress,
   errorMessage,
   warningMessage,
+  successMessage,
 }) {
   const {
     register,
     formState: { errors },
     handleSubmit,
     watch,
+    reset,
   } = useForm();
 
   const newPassword = useRef({});
   newPassword.current = watch('newPassword', '');
+
+  const submitForm = async (data) => {
+    console.log('data in submitForm');
+    // await submitHandler(data);
+    // reset();
+  };
   return (
     <AuthFormContainer
       title="Change Password"
       subTitle="Please provide your new password."
     >
-      <form onSubmit={handleSubmit(submitHandler)} autoComplete="off">
+      <form onSubmit={handleSubmit(submitForm)} autoComplete="off">
         <FormFieldRow
           id="newPassword"
           title="New Password"
@@ -44,19 +52,24 @@ function PasswordResetPerform({
           errors={errors}
           config={{
             required: 'Please confirm your password',
-            validate: (value) =>
-              value === newPassword.current || 'The passwords do not match',
+            validate: (value) => {
+              return (
+                value === newPassword.current ||
+                'The passwords entered do not match'
+              );
+            },
           }}
         />
         <SubmitButton
           title="Submit"
-          isLoading={isLoading}
+          isLoading={callInProgress}
           warningMessage={warningMessage}
           errorMessage={errorMessage}
+          successMessage={successMessage}
         />
       </form>
     </AuthFormContainer>
   );
 }
 
-export default PasswordResetPerform;
+export default PasswordChangeMain;

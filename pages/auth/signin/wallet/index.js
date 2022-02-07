@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Store } from '../../../../state/storeProvider';
 
@@ -7,9 +7,10 @@ import { nextStep } from '../../../../helper/scopeHelper';
 import { urlConstants } from '../../../../helper/urlConstants';
 import { saveToStore } from '../../../../helper/storageHelper';
 
-import MetaMaskSignIn from '../../../../components/auth/signin/metaMaskSignIn';
 import * as authActionType from 'architected-client/app-state/constants/iam.js';
 import { walletService } from '../../../../services/walletServices';
+import MetamaskSignIn from '../../../../components/auth/signin/metaMaskSignIn';
+import AuthContainer from '../../../../components/layout/authContainer';
 
 function SignInWallet() {
   const router = useRouter();
@@ -17,7 +18,7 @@ function SignInWallet() {
   const { state, dispatch } = useContext(Store);
   const { authState, callInProgress, errorMessage, warningMessage } =
     state['auth'];
-
+  const [hideForm, setHideForm] = useState(false);
   useEffect(() => {
     dispatch({ type: authActionType.INIT_DEFAULT_LAYOUT });
 
@@ -26,7 +27,8 @@ function SignInWallet() {
     }
   }, []);
 
-  const walletSubmitHandler = async () => {
+  const signInHandler = async () => {
+    console.log('in signInHandler');
     const clientDetails = await getClientDetails();
     var responseData = await walletService.walletSignIn(
       clientDetails,
@@ -35,18 +37,23 @@ function SignInWallet() {
     if (responseData && !responseData.inError) {
       saveToStore('_tokenWrapper', responseData.tokenWrapper);
       var nextUrl = await nextStep(responseData.tokenWrapper);
+      setHideForm(true);
       router.push(nextUrl);
     }
   };
 
   return (
     <>
-      <MetaMaskSignIn
-        submitHandler={walletSubmitHandler}
-        isLoading={callInProgress}
-        errorMessage={errorMessage}
-        warningMessage={warningMessage}
-      />
+      {!hideForm && (
+        <AuthContainer>
+          <MetamaskSignIn
+            signInHandler={signInHandler}
+            isLoading={callInProgress}
+            errorMessage={errorMessage}
+            warningMessage={warningMessage}
+          />
+        </AuthContainer>
+      )}
     </>
   );
 }

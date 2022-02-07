@@ -40,11 +40,7 @@ const EmailSignIn = ({
           register={register}
           errors={errors}
           config={{
-            required: 'Please enter your new password',
-            minLength: {
-              value: 9,
-              message: 'Password must have at least 9 characters',
-            },
+            required: 'Please enter your password',
           }}
         />
         <SubmitButton

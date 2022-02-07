@@ -99,19 +99,19 @@ function TopNavigation(props) {
                     {!contextMenuHidden && (
                       <>
                         <div className="context-menu absolute right-0 mt-2 w-48 shadow-lg py-1 bg-white ring-1 ring-gray-700 ring-opacity-5 focus:outline-none">
-                          <Link href="/profile">
+                          <Link href="/profile" passHref>
                             <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
                               <FontAwesomeIcon icon={faUserCircle} size="sm" />
                               <p className="ml-2">Your Profile</p>
                             </a>
                           </Link>
-                          <Link href="/changepassword">
+                          <Link href="/changepassword" passHref>
                             <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
                               <FontAwesomeIcon icon={faCog} size="sm" />
                               <p className="ml-2">Change Password</p>
                             </a>
                           </Link>
-                          <Link href="/auth/signout">
+                          <Link href="/auth/signout" passHref>
                             <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
                               <FontAwesomeIcon icon={faSignOutAlt} size="sm" />
                               <p className="ml-2">Sign out</p>
@@ -126,10 +126,10 @@ function TopNavigation(props) {
               {/* unauthenticated options */}
               {!authState && !isAuthFlow && (
                 <>
-                  <Link href="/auth/signup/email">
+                  <Link href="/auth/signup/email" passHref>
                     <a className="py-2 px-4 text-black">Sign Up</a>
                   </Link>
-                  <Link href="/auth/signin/email">
+                  <Link href="/auth/signin/email" passHref>
                     <a className="py-2 px-4 text-black">Sign In</a>
                   </Link>
                 </>
@@ -147,28 +147,28 @@ function TopNavigation(props) {
           </div>
         </div>
         {!mobileMenuHidden && (
-          <div className="mobile-menu md:hidden">
+          <div className="mobile-menu md:hidden px-5">
             {authState && authState.signinScope === 'COMPLETE' && (
               <>
-                <Link href="/file">
+                <Link href="/file" passHref>
                   <a className="block py-2 px-6 text-sm hover:bg-gray-200">
                     My Files
                   </a>
                 </Link>
 
-                <Link href="/profile">
+                <Link href="/profile" passHref>
                   <a className="block py-2 px-6 text-sm hover:bg-gray-200">
                     Profile
                   </a>
                 </Link>
 
-                <Link href="/changepassword">
+                <Link href="/changepassword" passHref>
                   <a className="block py-2 px-6 text-sm hover:bg-gray-200">
                     Change Password
                   </a>
                 </Link>
 
-                <Link href="/auth/signout">
+                <Link href="/auth/signout" passHref>
                   <a className="block py-2 px-6 text-sm hover:bg-gray-200">
                     Sign Out
                   </a>
@@ -177,13 +177,13 @@ function TopNavigation(props) {
             )}
             {authState == null && !isAuthFlow && (
               <>
-                <Link href="/auth/signup/email">
+                <Link href="/auth/signup/email" passHref>
                   <a className="block py-2 px-6 text-sm hover:bg-gray-200">
                     Sign Up
                   </a>
                 </Link>
 
-                <Link href="/auth/signin/email">
+                <Link href="/auth/signin/email" passHref>
                   <a className="block py-2 px-6 text-sm hover:bg-gray-200">
                     Sign In
                   </a>

@@ -8,12 +8,27 @@ import Web3 from 'web3';
 import { getError } from 'architected-client/helper/getError';
 import { CryptoHelper } from 'architected-crypto-helper';
 
-class WalletService {
+export class WalletService {
+  constructor() {
+    this.init = this.init.bind(this);
+  }
+
   init(config, cryptoHelper, authorizeHandler) {
     this.frontChannelService = new ArchitectedFrontChannel();
     this.frontChannelService.init(config);
     this.cryptoHelper = cryptoHelper;
     this.startAuthorize = authorizeHandler;
+    this.getSignatureMessage = this.getSignatureMessage.bind(this);
+    this.getWallet = this.getWallet.bind(this);
+    this.createWallet = this.createWallet.bind(this);
+    this.validateChain = this.validateChain.bind(this);
+    this.someMethod = this.someMethod.bind(this);
+    this.initializeWalletAccount = this.initializeWalletAccount.bind(this);
+    this.authenticateSignature = this.authenticateSignature.bind(this);
+    this.walletSignIn = this.walletSignIn.bind(this);
+    this.signUpConnectWallet = this.signUpConnectWallet.bind(this);
+    this.signUpValidateWallet = this.signUpValidateWallet.bind(this);
+    console.log(this);
   }
 
   getSignatureMessage = (siteName, nonce) => {
@@ -68,7 +83,7 @@ class WalletService {
   validateChain = async (dispatch) => {
     var validateResponse = { success: false, errorType: '', reason: '' };
     let retrievedChainId = '';
-
+    console.log('in validateChain');
     try {
       if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
@@ -122,6 +137,10 @@ class WalletService {
       chainId: retrievedChainId,
       success: true,
     };
+  };
+
+  someMethod = () => {
+    console.log('in somemethod');
   };
 
   initializeWalletAccount = async (dispatch) => {
@@ -198,7 +217,9 @@ class WalletService {
   walletSignIn = async (clientDetails, dispatch) => {
     try {
       dispatch({ type: authActionType.USER_SIGNIN_START });
-
+      console.log('in walletSignIn');
+      console.log(this);
+      this.someMethod();
       const walletChain = await this.validateChain(dispatch);
 
       if (!walletChain.success) {
@@ -394,10 +415,11 @@ class WalletService {
 }
 
 const walletService = (() => {
-  const cryptoHelper = new CryptoHelper();
   const instance = new WalletService();
-  instance.init(architectedConfig, cryptoHelper, startAuthorize);
   return instance;
 })();
+
+const cryptoHelper = new CryptoHelper();
+walletService.init(architectedConfig, cryptoHelper, startAuthorize);
 
 export { walletService };

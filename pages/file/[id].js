@@ -14,6 +14,7 @@ import {
 } from '../../helper/contractHelper';
 
 import FileDetailContainer from '../../components/file/fileDetailContainer';
+import Link from 'next/link';
 
 function FileDetail({ params }) {
   const fileId = params.id;
@@ -42,16 +43,16 @@ function FileDetail({ params }) {
   useEffect(() => {
     let isMounted = true;
     const validToken = hasCompleteToken(authState, bearerToken);
-    console.log('validToken' + validToken);
-    // if (!validToken) {
-    //   router.push('/');
-    // } else {
-    //   if (isMounted) retrieveData();
-    // }
+
+    if (!validToken) {
+      router.push('/');
+    } else {
+      if (isMounted) retrieveData();
+    }
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [fileId]);
 
   const deleteFileHandler = async () => {
     await fileClient.deleteFile(
@@ -83,18 +84,19 @@ function FileDetail({ params }) {
     await retrieveData();
   };
 
-  const previewTokenHandler = async (price) => {
+  const previewTokenHandler = async (data) => {
     var fileUpdateRequest = {
       globalId: file.globalId,
-      tokenPrice: price,
+      tokenPrice: data.price,
     };
 
-    await fileClient.updateNFT(
-      fileUpdateRequest,
-      dispatch,
-      bearerToken.tokenValue
-    );
-    await retrieveData();
+    // await fileClient.updateNFT(
+    //   fileUpdateRequest,
+    //   dispatch,
+    //   bearerToken.tokenValue
+    // );
+
+    // await retrieveData();
   };
 
   const mintToken = async (file) => {
@@ -136,16 +138,15 @@ function FileDetail({ params }) {
         </div>
         <div className="flex">
           <div className="mt-2">
-            <a
-              className="bg-black text-white text-sm py-2 px-4 rounded"
-              href={urlConstants.get('PAGE_FILE_LIST')}
-            >
-              Back to file list
-            </a>
+            <Link href={urlConstants.get('PAGE_FILE_LIST')} passHref>
+              <a className="bg-black text-white text-sm py-2 px-4 rounded">
+                Back to file list
+              </a>
+            </Link>
           </div>
         </div>
       </div>
-      {/* <FileDetailContainer
+      <FileDetailContainer
         siteMode={architectedConfig.siteMode}
         isLoadingItem={isLoadingItem}
         loadingError={loadingError}
@@ -159,7 +160,7 @@ function FileDetail({ params }) {
         uploadToIPFS={uploadToIPFS}
         previewTokenHandler={previewTokenHandler}
         mintTokenHandler={mintTokenHandler}
-      /> */}
+      />
     </div>
   );
 }

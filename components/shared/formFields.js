@@ -11,18 +11,49 @@ const FormLabel = ({ id, title }) => {
   );
 };
 
-const FormTextBox = ({ id, config, register, errors }) => {
+const FormTextBox = ({ id, config, register }) => {
   const type = id.toLowerCase().indexOf('password') > -1 ? 'password' : 'text';
   return (
     <>
       <div className="flex flex-col">
         <input
           placeholder=""
-          className="border rounded w-full py-2 px-3 w-64 align-middle"
+          className="border rounded w-full py-2 px-3 w-96 align-middle"
           autoComplete="off"
           type={type}
           {...register(id, config)}
         />
+      </div>
+    </>
+  );
+};
+
+const FormTextArea = ({ id, config, register }) => {
+  return (
+    <>
+      <div className="flex flex-col">
+        <textarea
+          placeholder=""
+          className="border rounded w-full py-2 px-3 w-96 align-middle"
+          autoComplete="off"
+          rows="4"
+          {...register(id, config)}
+        />
+      </div>
+    </>
+  );
+};
+
+const FormControl = ({ id, config, register, errors, controlType }) => {
+  return (
+    <>
+      <div className="flex flex-col">
+        {!controlType && (
+          <FormTextBox id={id} config={config} register={register} />
+        )}
+        {controlType == 'textarea' && (
+          <FormTextArea id={id} config={config} register={register} />
+        )}
         {errors && errors[id] && (
           <p className="flex flex-col text-red-400 text-sm">
             {errors[id].message}
@@ -33,15 +64,16 @@ const FormTextBox = ({ id, config, register, errors }) => {
   );
 };
 
-const FormFieldRow = ({ id, title, config, register, errors }) => {
+const FormFieldRow = ({ id, title, config, register, errors, controlType }) => {
   return (
-    <div className="mb-4 flex flex-col sm:flex-row align-middle">
+    <div className="mb-4 flex flex-col align-middle">
       <FormLabel id={id} title={title} />
-      <FormTextBox
+      <FormControl
         id={id}
         config={config}
         register={register}
         errors={errors}
+        controlType={controlType}
       />
     </div>
   );
@@ -80,15 +112,26 @@ const AnimatedButton = () => {
   );
 };
 
-const BasicButton = ({ title }) => {
+const BasicButton = ({ title, type, onClickHandler }) => {
   return (
     <>
-      <button
-        className="bg-black text-white px-4 py-3 rounded text-sm w-96"
-        type="submit"
-      >
-        {title}
-      </button>
+      {!type && (
+        <button
+          className="bg-black text-white px-4 py-3 rounded text-sm w-96"
+          type="submit"
+        >
+          {title}
+        </button>
+      )}
+      {type && type == 'button' && (
+        <button
+          className="bg-black text-white px-4 py-3 rounded text-sm w-96"
+          type="button"
+          onClick={onClickHandler}
+        >
+          {title}
+        </button>
+      )}
     </>
   );
 };
@@ -118,6 +161,37 @@ const SubmitButton = ({
   );
 };
 
+const OnClickButton = ({
+  title,
+  isLoading,
+  warningMessage,
+  errorMessage,
+  successMessage,
+  onClickHandler,
+}) => {
+  return (
+    <>
+      <div className="flex items-center justify-between mb-4">
+        {isLoading ? (
+          <AnimatedButton />
+        ) : (
+          <BasicButton
+            title={title}
+            isLoading={isLoading}
+            type="button"
+            onClickHandler={onClickHandler}
+          />
+        )}
+      </div>
+      <MessagePanel
+        errorMessage={errorMessage}
+        warningMessage={warningMessage}
+        successMessage={successMessage}
+      />
+    </>
+  );
+};
+
 export {
   FormLabel,
   FormTextBox,
@@ -126,4 +200,5 @@ export {
   BasicButton,
   SubmitButton,
   emailRegex,
+  OnClickButton,
 };
