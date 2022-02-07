@@ -22,13 +22,11 @@ export class WalletService {
     this.getWallet = this.getWallet.bind(this);
     this.createWallet = this.createWallet.bind(this);
     this.validateChain = this.validateChain.bind(this);
-    this.someMethod = this.someMethod.bind(this);
     this.initializeWalletAccount = this.initializeWalletAccount.bind(this);
     this.authenticateSignature = this.authenticateSignature.bind(this);
     this.walletSignIn = this.walletSignIn.bind(this);
     this.signUpConnectWallet = this.signUpConnectWallet.bind(this);
     this.signUpValidateWallet = this.signUpValidateWallet.bind(this);
-    console.log(this);
   }
 
   getSignatureMessage = (siteName, nonce) => {
@@ -139,10 +137,6 @@ export class WalletService {
     };
   };
 
-  someMethod = () => {
-    console.log('in somemethod');
-  };
-
   initializeWalletAccount = async (dispatch) => {
     var walletAccount = { success: false, errorType: '', reason: '' };
     let retrievedAccountAddress = '';
@@ -217,9 +211,7 @@ export class WalletService {
   walletSignIn = async (clientDetails, dispatch) => {
     try {
       dispatch({ type: authActionType.USER_SIGNIN_START });
-      console.log('in walletSignIn');
-      console.log(this);
-      this.someMethod();
+
       const walletChain = await this.validateChain(dispatch);
 
       if (!walletChain.success) {
