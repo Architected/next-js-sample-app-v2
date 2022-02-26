@@ -34,6 +34,9 @@ function TopNavigation(props) {
   const displayConnect =
     architectedConfig.siteMode == 'dapp' && asPath != '/auth/signin/connect';
 
+  const displayConnect =
+    architectedConfig.siteMode == 'dapp' && asPath != '/auth/signin/connect';
+
   const toggleMobileMenu = (e) => {
     setMobileMenuHidden(!mobileMenuHidden);
     if (e) e.stopPropagation();
