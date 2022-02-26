@@ -26,13 +26,13 @@ function TopNavigation(props) {
 
   const signInUrl =
     architectedConfig.siteMode == 'dapp'
-      ? '/auth/signin/wallet'
+      ? '/auth/signin/connect'
       : '/auth/signin/email';
   const signInTitle =
     architectedConfig.siteMode == 'dapp' ? 'Connect' : 'Sign in';
 
   const displayConnect =
-    architectedConfig.siteMode == 'dapp' && asPath != '/auth/signin/wallet';
+    architectedConfig.siteMode == 'dapp' && asPath != '/auth/signin/connect';
 
   const toggleMobileMenu = (e) => {
     setMobileMenuHidden(!mobileMenuHidden);
@@ -62,12 +62,114 @@ function TopNavigation(props) {
     };
   }, [mobileMenuHidden, contextMenuHidden]);
 
+  const ContextMenuLink = ({ href, icon, title }) => {
+    return (
+      <Link href={href} passHref>
+        <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
+          <FontAwesomeIcon icon={icon} size="sm" />
+          <p className="ml-2">{title}e</p>
+        </a>
+      </Link>
+    );
+  };
+
+  const ContextMenu = () => {
+    return (
+      <div className="context-menu absolute right-0 mt-2 w-48 shadow-lg py-1 bg-white ring-1 ring-gray-700 ring-opacity-5 focus:outline-none">
+        <ContextMenuLink
+          href="/profile"
+          icon={faUserCircle}
+          title="Your profile"
+        />
+        {architectedConfig.siteMode == 'app' && (
+          <ContextMenuLink
+            href="/changepassword"
+            icon={faCog}
+            title="Change password"
+          />
+        )}
+        <ContextMenuLink
+          href="/auth/signout"
+          icon={faSignOutAlt}
+          title="Sign out"
+        />
+      </div>
+    );
+  };
+
+  const TopRightNavLink = ({ link, title }) => {
+    return (
+      <>
+        <Link href={link} passHref>
+          <a className="py-2 px-4 text-black">{title}</a>
+        </Link>
+      </>
+    );
+  };
+
+  const TopRightMenuLinks = () => {
+    return (
+      <>
+        {architectedConfig.siteMode == 'dapp' ? (
+          <>
+            {displayConnect && (
+              <TopRightNavLink link="/auth/signin/connect" title="Connect" />
+            )}
+          </>
+        ) : (
+          <>
+            <TopRightNavLink link="/auth/signup/email" title="Sign Up" />
+            <TopRightNavLink link="/auth/signin/email" title="Sign In" />
+          </>
+        )}
+      </>
+    );
+  };
+
+  const ResponsiveMenuLink = ({ link, title }) => {
+    return (
+      <Link href={link} passHref>
+        <a className="block py-2 px-6 text-sm hover:bg-gray-200">{title}</a>
+      </Link>
+    );
+  };
+
+  const ResponsiveMenuLinks = () => {
+    return (
+      <>
+        {architectedConfig.siteMode == 'dapp' ? (
+          <>
+            <ResponsiveMenuLink link="/file" title="My Files" />
+            <ResponsiveMenuLink link="/profile" title="Profile" />
+            <ResponsiveMenuLink
+              link="/changepassword"
+              title="Change Password"
+            />
+            <ResponsiveMenuLink link="/auth/signout" title="Sign Out" />
+          </>
+        ) : (
+          <>
+            <ResponsiveMenuLink link="/file" title="My Files" />
+            <ResponsiveMenuLink link="/profile" title="Profile" />
+            <ResponsiveMenuLink
+              link="/changepassword"
+              title="Change Password"
+            />
+            <ResponsiveMenuLink link="/auth/signout" title="Sign Out" />
+          </>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
       <nav className="border-b-2 border-gray-100">
         <div className="mx-auto px-10">
           <div className="flex justify-between">
-            {/* LHS Portion */}
+            {/* 
+            LHS Portion 
+            */}
             <div className="flex space-x-4">
               <div>
                 <Link href="/" passHref>
@@ -82,9 +184,13 @@ function TopNavigation(props) {
                 </Link>
               </div>
             </div>
-            {/* RHS Portion */}
+            {/* 
+            RHS Portion 
+            */}
             <div className="hidden md:flex items-center space-x-1">
-              {/* Signed in options */}
+              {/* 
+              Signed in options 
+              */}
               {authState && authState.signinScope === 'COMPLETE' && (
                 <>
                   <div className="py-2 px-2">{authState.identifier}</div>
@@ -95,47 +201,18 @@ function TopNavigation(props) {
                     >
                       <Identicon string={authState.identifier} size={30} />
                     </button>
-                    {/* Display on click of identicon */}
-                    {!contextMenuHidden && (
-                      <>
-                        <div className="context-menu absolute right-0 mt-2 w-48 shadow-lg py-1 bg-white ring-1 ring-gray-700 ring-opacity-5 focus:outline-none">
-                          <Link href="/profile" passHref>
-                            <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
-                              <FontAwesomeIcon icon={faUserCircle} size="sm" />
-                              <p className="ml-2">Your Profile</p>
-                            </a>
-                          </Link>
-                          <Link href="/changepassword" passHref>
-                            <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
-                              <FontAwesomeIcon icon={faCog} size="sm" />
-                              <p className="ml-2">Change Password</p>
-                            </a>
-                          </Link>
-                          <Link href="/auth/signout" passHref>
-                            <a className="flex block px-4 py-2 text-sm text-gray-700 items-center hover:bg-gray-200">
-                              <FontAwesomeIcon icon={faSignOutAlt} size="sm" />
-                              <p className="ml-2">Sign out</p>
-                            </a>
-                          </Link>
-                        </div>
-                      </>
-                    )}
+                    {!contextMenuHidden && <ContextMenu />}
                   </div>
                 </>
               )}
-              {/* unauthenticated options */}
-              {!authState && !isAuthFlow && (
-                <>
-                  <Link href="/auth/signup/email" passHref>
-                    <a className="py-2 px-4 text-black">Sign Up</a>
-                  </Link>
-                  <Link href="/auth/signin/email" passHref>
-                    <a className="py-2 px-4 text-black">Sign In</a>
-                  </Link>
-                </>
-              )}
+              {/* 
+                unauthenticated options 
+                */}
+              {!authState && !isAuthFlow && <TopRightMenuLinks />}
             </div>
-            {/* Responsive menu toggle icon */}
+            {/* 
+              Responsive menu toggle icon 
+              */}
             <div className="md:hidden flex items-center">
               <button
                 className="mobile-menu-button"
@@ -146,48 +223,14 @@ function TopNavigation(props) {
             </div>
           </div>
         </div>
+        {/* 
+          Responsive menu content
+        */}
         {!mobileMenuHidden && (
           <div className="mobile-menu md:hidden px-5">
             {authState && authState.signinScope === 'COMPLETE' && (
               <>
-                <Link href="/file" passHref>
-                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
-                    My Files
-                  </a>
-                </Link>
-
-                <Link href="/profile" passHref>
-                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
-                    Profile
-                  </a>
-                </Link>
-
-                <Link href="/changepassword" passHref>
-                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
-                    Change Password
-                  </a>
-                </Link>
-
-                <Link href="/auth/signout" passHref>
-                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
-                    Sign Out
-                  </a>
-                </Link>
-              </>
-            )}
-            {authState == null && !isAuthFlow && (
-              <>
-                <Link href="/auth/signup/email" passHref>
-                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
-                    Sign Up
-                  </a>
-                </Link>
-
-                <Link href="/auth/signin/email" passHref>
-                  <a className="block py-2 px-6 text-sm hover:bg-gray-200">
-                    Sign In
-                  </a>
-                </Link>
+                <ResponsiveMenuLinks />
               </>
             )}
           </div>

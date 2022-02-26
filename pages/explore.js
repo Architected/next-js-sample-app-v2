@@ -87,7 +87,7 @@ function Explore() {
         await purchaseToken(nft);
         router.push('/my-purchases');
       } else {
-        router.push('/auth/signin/wallet');
+        router.push('/auth/signin/connect');
       }
     } catch (err) {
       console.log(err);

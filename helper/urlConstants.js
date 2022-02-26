@@ -27,6 +27,6 @@ urlConstants.set('PASSWORD_RESET_VALIDATE', '/auth/password-reset/validate');
 urlConstants.set('PASSWORD_RESET_PERFORM', '/auth/password-reset/perform');
 urlConstants.set('PASSWORD_RESET_COMPLETE', '/auth/password-reset/complete');
 urlConstants.set('PAGE_FILE_LIST', '/file');
-urlConstants.set('PAGE_MARKETPLACE', '/marketplace');
+urlConstants.set('PAGE_MARKETPLACE', '/explore');
 
 export { urlConstants };

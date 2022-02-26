@@ -12,7 +12,7 @@ import { walletService } from '../../../../services/walletServices';
 import MetamaskSignIn from '../../../../components/auth/signin/metaMaskSignIn';
 import AuthContainer from '../../../../components/layout/authContainer';
 
-function SignInWallet() {
+function SignInConnect() {
   const router = useRouter();
 
   const { state, dispatch } = useContext(Store);
@@ -58,4 +58,4 @@ function SignInWallet() {
   );
 }
 
-export default SignInWallet;
+export default SignInConnect;

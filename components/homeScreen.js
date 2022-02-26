@@ -14,7 +14,7 @@ const DappModeScreen = () => {
         </p>
         <div className="flex flex-row">
           <div className="justify-center gap-6 mb-6">
-            <Link href="/auth/signin/wallet" passHref>
+            <Link href="/auth/signin/connect" passHref>
               <a className="bg-black text-white py-2 px-4 rounded">Connect</a>
             </Link>
           </div>
